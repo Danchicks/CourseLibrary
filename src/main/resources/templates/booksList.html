@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список книг</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            padding-bottom: 70px; /* Встановлення відступу для нижнього поля, яке передує footer */
+        }
+
+        header {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            position: fixed; /* Зафіксований хедер */
+            width: 100%; /* Ширина 100% відносно вікна перегляду */
+            top: 0; /* Прикріпити зверху */
+            z-index: 1000; /* Встановити високий індекс стеку, щоб хедер був поверх інших елементів */
+        }
+
+        h1 {
+            margin-top: 0;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 80%;
+            margin: 0 auto;
+        }
+
+        .add-book-button {
+            padding: 10px 20px;
+            background-color: #fff;
+            color: black;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-book-button:hover {
+            background-color: #ccc;
+        }
+
+        .header-image {
+            text-align: center;
+            position: relative;
+        }
+
+        .header-image img {
+            width: 100%;
+            max-height: 100vh;
+            object-fit: cover;
+            filter: blur(4px);
+            height: 450px;
+        }
+
+        .header-text {
+            position: absolute;
+            font-family: 'Courier New', sans-serif;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 64px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        table {
+            width: 100%;
+            margin: 20px auto;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #222;
+            color: #fff;
+        }
+
+        tr:hover {
+            background-color: #f2f2f2;
+        }
+
+        td {
+            font-size: 16px;
+            position: relative;
+        }
+
+        .delete-button {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;
+            width: 130px; /* Ширина кнопки */
+            height: 30px; /* Висота кнопки */
+            display: flex; /* Робить вміст кнопки (відро) центрованим */
+            justify-content: center; /* Вирівнює вміст по горизонталі */
+            align-items: center; /* Вирівнює вміст по вертикалі */
+        }
+
+        .delete-button:hover {
+            background-color: #cc0000;
+        }
+
+        .sort-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sort-buttons a {
+            margin: 0 10px;
+            padding: 8px 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .sort-buttons a:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+            bottom: 0;
+            width: 100%;
+            position: fixed;
+        }
+
+    </style>
+</head>
+<body>
+<header>
+    <div class="header-content">
+        <h1>MyLibrary</h1>
+        <a href="/addBook" class="add-book-button">Додати книгу</a>
+    </div>
+</header>
+<div class="header-image">
+    <img src="https://i.pinimg.com/564x/3c/4c/67/3c4c6701721f7031b95d5553c9e7122f.jpg" alt="Library Image">
+    <div class="header-text">Create future with us</div>
+</div>
+<h1>Список книг</h1>
+<div class="sort-buttons">
+    <button onclick="sortByAuthor()">Сортувати за прізвищем</button>
+    <button onclick="sortByYear()">Сортувати за роком</button>
+</div>
+<table>
+    <thead>
+    <tr>
+        <th>Прізвище та ініціали автора</th>
+        <th>Назва книги</th>
+        <th>Рік видання</th>
+        <th>Кількість екземплярів</th>
+        <th>Дії</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- Використовуйте Thymeleaf для відображення книжок -->
+    <tr th:each="book : ${books}">
+        <td th:text="${book.authorName}">Прізвище та ініціали автора</td>
+        <td th:text="${book.title}">Назва книги</td>
+        <td th:text="${book.year}">Рік видання</td>
+        <td th:text="${book.quantity}">Кількість екземплярів</td>
+        <td>
+            <button class="delete-button" id="delete" name="delete" th:attr="onclick='deleteBook(\'' + ${book.id} + '\')'">Delete</button>
+        </td>
+    </tr>)
+    </tbody>
+</table>
+<footer>
+    &copy; 2024 MyLibrary
+</footer>
+</body>
+<script>
+    function deleteBook(id) {
+        const url = id;
+
+        fetch(url, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log(url);
+                console.log('Book successfully deleted');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
+
+    // Получаем ссылку на таблицу
+    const table = document.querySelector('table');
+
+    // Получаем ссылки на кнопки сортировки
+    const sortAuthorButton = document.querySelector('#sort-author');
+    const sortYearButton = document.querySelector('#sort-year');
+
+    // Функция для сортировки по автору
+    function sortByAuthor() {
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        rows.sort((a, b) => {
+            const authorA = a.cells[0].textContent.trim();
+            const authorB = b.cells[0].textContent.trim();
+            return authorA.localeCompare(authorB);
+        });
+        // Удаляем текущие строки из таблицы
+        rows.forEach(row => table.querySelector('tbody').removeChild(row));
+        // Добавляем отсортированные строки в таблицу
+        rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    }
+
+    // Функция для сортировки по году
+    function sortByYear() {
+        const rows = Array.from(table.querySelectorAll('tbody tr'));
+        rows.sort((a, b) => {
+            const yearA = parseInt(a.cells[2].textContent.trim());
+            const yearB = parseInt(b.cells[2].textContent.trim());
+            return yearA - yearB;
+        });
+        // Удаляем текущие строки из таблицы
+        rows.forEach(row => table.querySelector('tbody').removeChild(row));
+        // Добавляем отсортированные строки в таблицу
+        rows.forEach(row => table.querySelector('tbody').appendChild(row));
+    }
+
+    // Назначаем обработчики событий на кнопки сортировки
+    sortAuthorButton.addEventListener('click', sortByAuthor);
+    sortYearButton.addEventListener('click', sortByYear);
+</script>
+
+</html>
