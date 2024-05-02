@@ -25,8 +25,31 @@
         }
 
         h1 {
-            margin-top: 0;
+            font-size: 24px; /* Зменшуємо розмір заголовку */
+            color: black; /* Змінюємо колір тексту на чорний */
+            margin-bottom: 10px; /* Зменшуємо відступ вниз */
         }
+
+        .sort-buttons {
+            text-align: center;
+            margin-bottom: 10px; /* Зменшуємо відступ вниз */
+        }
+
+        .sort-buttons button {
+            padding: 8px 16px; /* Зменшуємо висоту і ширину кнопок */
+            background-color: white; /* Змінюємо фон кнопок на білий */
+            color: black; /* Змінюємо колір тексту на чорний */
+            border: 1px solid black; /* Додаємо рамку */
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 0 5px; /* Зменшуємо відступ між кнопками */
+            transition: background-color 0.3s ease;
+        }
+
+        .sort-buttons button:hover {
+            background-color: #f0f0f0; /* Змінюємо колір при наведенні */
+        }
+
 
         .header-content {
             display: flex;
@@ -105,7 +128,6 @@
         }
 
         .delete-button {
-            position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
@@ -122,6 +144,32 @@
             align-items: center; /* Вирівнює вміст по вертикалі */
         }
 
+        .add-button {
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: forestgreen;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;
+            width: 130px; /* Ширина кнопки */
+            height: 30px; /* Висота кнопки */
+            display: flex; /* Робить вміст кнопки (відро) центрованим */
+            justify-content: center; /* Вирівнює вміст по горизонталі */
+            align-items: center; /* Вирівнює вміст по вертикалі */
+        }
+
+        .delete-button, .add-button {
+            display: inline-block; /* Розмістити кнопки в один рядок */
+            margin-right: 10px; /* Додати відступ між кнопками */
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px; /* Задати відступи */
+            cursor: pointer;
+        }
+
         .delete-button:hover {
             background-color: #cc0000;
         }
@@ -129,6 +177,15 @@
         .sort-buttons {
             text-align: center;
             margin-bottom: 20px;
+        }
+
+        .book-list-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 80%;
+            margin: 0 auto;
+            margin-bottom: 20px; /* Збільшуємо відступ нижче */
         }
 
         .sort-buttons a {
@@ -156,6 +213,25 @@
             width: 100%;
             position: fixed;
         }
+        .pagination {
+            margin-top: 20px; /* Відступ від таблиці */
+            text-align: center; /* Вирівнювання по центру */
+        }
+
+        .pagination button {
+            padding: 10px 15px; /* Розміри кнопок */
+            margin: 0 5px; /* Відстань між кнопками */
+            background-color: black; /* Колір фону */
+            color: white; /* Колір тексту */
+            border: none; /* Видаляємо рамку */
+            border-radius: 5px; /* Закруглені кути */
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background-color: #0056b3;
+        }
 
     </style>
 </head>
@@ -170,14 +246,17 @@
     <img src="https://i.pinimg.com/564x/3c/4c/67/3c4c6701721f7031b95d5553c9e7122f.jpg" alt="Library Image">
     <div class="header-text">Create future with us</div>
 </div>
-<h1>Список книг</h1>
-<div class="sort-buttons">
-    <button onclick="sortByAuthor()">Сортувати за прізвищем</button>
-    <button onclick="sortByYear()">Сортувати за роком</button>
+<div class="book-list-container">
+    <h1>Список книг</h1>
+    <div class="sort-buttons">
+        <button onclick="sortByAuthor()">Сортувати за прізвищем</button>
+        <button onclick="sortByYear()">Сортувати за роком</button>
+    </div>
 </div>
 <table>
     <thead>
     <tr>
+        <th>#</th>
         <th>Прізвище та ініціали автора</th>
         <th>Назва книги</th>
         <th>Рік видання</th>
@@ -186,18 +265,20 @@
     </tr>
     </thead>
     <tbody>
-    <!-- Використовуйте Thymeleaf для відображення книжок -->
-    <tr th:each="book : ${books}">
+    <tr th:each="book, bookStat : ${books}">
+        <td th:text="${bookStat.count}">1</td>
         <td th:text="${book.authorName}">Прізвище та ініціали автора</td>
         <td th:text="${book.title}">Назва книги</td>
         <td th:text="${book.year}">Рік видання</td>
         <td th:text="${book.quantity}">Кількість екземплярів</td>
         <td>
             <button class="delete-button" id="delete" name="delete" th:attr="onclick='deleteBook(\'' + ${book.id} + '\')'">Delete</button>
+            <button class="add-button" id="add" name="add" th:attr="onclick='addBook(\'' + ${book.id} + '\')'">Add</button>
         </td>
-    </tr>)
+    </tr>
     </tbody>
 </table>
+<div class="pagination"></div>
 <footer>
     &copy; 2024 MyLibrary
 </footer>
@@ -225,6 +306,27 @@
             });
     }
 
+    function addBook(id) {
+        const url = "/books/" + id;
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log('Book successfully added');
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+    }
+
 
     // Получаем ссылку на таблицу
     const table = document.querySelector('table');
@@ -234,34 +336,83 @@
     const sortYearButton = document.querySelector('#sort-year');
 
     // Функция для сортировки по автору
+    function updateRowNumbers() {
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach((row, index) => {
+            const numberCell = row.querySelector('td:first-child');
+            numberCell.textContent = index + 1;
+        });
+    }
+
+    // Функція для сортування за автором
     function sortByAuthor() {
         const rows = Array.from(table.querySelectorAll('tbody tr'));
         rows.sort((a, b) => {
-            const authorA = a.cells[0].textContent.trim();
-            const authorB = b.cells[0].textContent.trim();
+            const authorA = a.cells[1].textContent.trim();
+            const authorB = b.cells[1].textContent.trim();
             return authorA.localeCompare(authorB);
         });
         // Удаляем текущие строки из таблицы
         rows.forEach(row => table.querySelector('tbody').removeChild(row));
         // Добавляем отсортированные строки в таблицу
         rows.forEach(row => table.querySelector('tbody').appendChild(row));
+        // Оновлюємо номерацію рядків
+        updateRowNumbers();
     }
 
-    // Функция для сортировки по году
     function sortByYear() {
         const rows = Array.from(table.querySelectorAll('tbody tr'));
         rows.sort((a, b) => {
-            const yearA = parseInt(a.cells[2].textContent.trim());
-            const yearB = parseInt(b.cells[2].textContent.trim());
+            const yearA = parseInt(a.cells[3].textContent.trim());
+            const yearB = parseInt(b.cells[3].textContent.trim());
             return yearA - yearB;
         });
         // Удаляем текущие строки из таблицы
         rows.forEach(row => table.querySelector('tbody').removeChild(row));
         // Добавляем отсортированные строки в таблицу
         rows.forEach(row => table.querySelector('tbody').appendChild(row));
+        // Оновлюємо номерацію рядків
+        updateRowNumbers();
     }
 
-    // Назначаем обработчики событий на кнопки сортировки
+    function paginateElements() {
+        const rows = document.querySelectorAll('tbody tr');
+        const pageSize = 10;
+        const pageCount = Math.ceil(rows.length / pageSize);
+
+        // Створюємо кнопки для навігації між сторінками
+        const paginationContainer = document.querySelector('.pagination');
+        paginationContainer.innerHTML = '';
+
+        for (let i = 0; i < pageCount; i++) {
+            const pageNumber = i + 1;
+            const button = document.createElement('button');
+            button.textContent = pageNumber;
+            button.addEventListener('click', function () {
+                showPage(pageNumber, pageSize);
+            });
+            paginationContainer.appendChild(button);
+        }
+
+        showPage(1, pageSize);
+    }
+
+    function showPage(pageNumber, pageSize) {
+        const rows = document.querySelectorAll('tbody tr');
+        const startIndex = (pageNumber - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+
+        rows.forEach((row, index) => {
+            if (index >= startIndex && index < endIndex) {
+                row.style.display = ''; // Показуємо рядок
+            } else {
+                row.style.display = 'none'; // Приховуємо рядок
+            }
+        });
+    }
+
+    paginateElements();
+
     sortAuthorButton.addEventListener('click', sortByAuthor);
     sortYearButton.addEventListener('click', sortByYear);
 </script>
