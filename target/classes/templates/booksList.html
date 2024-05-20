@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Бібліотека</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        header img {
+            width: 40px;
+            margin-right: 10px;
+        }
+
+        .parallax-container {
+            position: relative;
+            height: 400px;
+            background: url('https://i.pinimg.com/564x/3c/4c/67/3c4c6701721f7031b95d5553c9e7122f.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .parallax-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .slider {
+            position: relative;
+            width: 80%;
+            max-width: 1000px;
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        .slides {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slides img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .controls {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+            z-index: 3;
+        }
+
+        .controls button {
+            background-color: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        .book-list-container {
+            max-width: 80%;
+            margin: 20px auto;
+        }
+
+        .menu {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu button {
+            padding: 10px 20px;
+            margin: 0 5px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .menu button:hover {
+            background-color: #555;
+        }
+
+        .book-item {
+            background-color: #fff;
+            box-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.1);
+            margin: 10px;
+            padding: 20px;
+            border-radius: 8px;
+            flex-basis: calc(33.333% - 20px);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .book-item img {
+            max-width: 100%;
+            border-radius: 4px;
+        }
+
+        .book-details {
+            margin-top: 10px;
+        }
+
+        .book-details p {
+            margin: 5px 0;
+        }
+
+        .edit-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .edit-button:hover {
+            background-color: #0056b3;
+        }
+
+        .book-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        .form-group button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group button:hover {
+            background-color: #0056b3;
+        }
+
+        .footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            bottom: 0;
+            width: 100%;
+            position: relative;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <img src="https://cdn-icons-png.flaticon.com/512/1055/1055646.png" alt="Book Icon">
+    <h1>Бібліотека</h1>
+</header>
+
+<div class="parallax-container">
+    <div class="parallax-overlay">
+        <div class="slider">
+            <div class="slides">
+                <img src="https://via.placeholder.com/300" alt="Default Cover 1">
+                <img src="https://via.placeholder.com/300" alt="Default Cover 2">
+                <img src="https://via.placeholder.com/300" alt="Default Cover 3">
+            </div>
+            <div class="controls">
+                <button id="prev">&lt;</button>
+                <button id="next">&gt;</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="book-list-container">
+    <h1>Список книг</h1>
+    <div class="menu">
+        <button onclick="openModal()">Додати книгу</button>
+        <button onclick="sortBooks('year')">Сортувати за роком</button>
+        <button onclick="sortBooks('author')">Сортувати за Автором</button>
+        <button onclick="sortBooks('title')">Сортувати за назвою</button>
+    </div>
+    <div class="book-list">
+        <!-- Book items will be inserted here dynamically -->
+    </div>
+</div>
+
+<footer class="footer">&copy; 2024 Бібліотека</footer>
+
+<!-- Modal -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Додати нову книгу</h2>
+            <span class="close" onclick="closeModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="addBookForm">
+                <div class="form-group">
+                    <label for="author">Автор:</label>
+                    <input type="text" id="author" name="author" required>
+                </div>
+                <div class="form-group">
+                    <label for="title">Назва книги:</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="year">Рік видання:</label>
+                    <input type="number" id="year" name="year" required>
+                </div>
+                <div class="form-group">
+                    <label for="quantity">Кількість екземплярів:</label>
+                    <input type="number" id="quantity" name="quantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="image">Посилання на обкладинку:</label>
+                    <input type="url" id="image" name="image" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Додати книгу</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div id="editBookModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>Редагувати книгу</h2>
+            <span class="close" onclick="closeEditModal()">&times;</span>
+        </div>
+        <div class="modal-body">
+            <form id="editBookForm">
+                <input type="hidden" id="editBookId">
+                <div class="form-group">
+                    <label for="editAuthor">Автор:</label>
+                    <input type="text" id="editAuthor" name="editAuthor" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTitle">Назва книги:</label>
+                    <input type="text" id="editTitle" name="editTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="editYear">Рік видання:</label>
+                    <input type="number" id="editYear" name="editYear" required>
+                </div>
+                <div class="form-group">
+                    <label for="editQuantity">Кількість екземплярів:</label>
+                    <input type="number" id="editQuantity" name="editQuantity" required>
+                </div>
+                <div class="form-group">
+                    <label for="editImage">Посилання на обкладинку:</label>
+                    <input type="url" id="editImage" name="editImage" required>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Зберегти зміни</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    let books = [
+        // Sample books
+        { id: 1, author: "Author 1", title: "Book 1", year: 2021, quantity: 5, image: "https://via.placeholder.com/300" },
+        { id: 2, author: "Author 2", title: "Book 2", year: 2020, quantity: 2, image: "https://via.placeholder.com/300" }
+    ];
+
+    const bookListElement = document.querySelector('.book-list');
+
+    function renderBooks() {
+        bookListElement.innerHTML = '';
+        books.forEach(book => {
+            if (book.quantity > 0) {
+                const bookItem = document.createElement('div');
+                bookItem.className = 'book-item';
+                bookItem.innerHTML = `
+                        <img src="${book.image}" alt="${book.title}">
+                        <div class="book-details">
+                            <p><strong>Автор:</strong> ${book.author}</p>
+                            <p><strong>Назва:</strong> ${book.title}</p>
+                            <p><strong>Рік:</strong> ${book.year}</p>
+                            <p><strong>Кількість:</strong> ${book.quantity}</p>
+                        </div>
+                        <button class="edit-button" onclick="openEditModal(${book.id})">Редагувати</button>
+                    `;
+                bookListElement.appendChild(bookItem);
+            }
+        });
+    }
+
+    function openModal() {
+        document.getElementById('addBookModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('addBookModal').style.display = 'none';
+    }
+
+    function openEditModal(id) {
+        const book = books.find(book => book.id === id);
+        if (book) {
+            document.getElementById('editBookId').value = book.id;
+            document.getElementById('editAuthor').value = book.author;
+            document.getElementById('editTitle').value = book.title;
+            document.getElementById('editYear').value = book.year;
+            document.getElementById('editQuantity').value = book.quantity;
+            document.getElementById('editImage').value = book.image;
+            document.getElementById('editBookModal').style.display = 'flex';
+        }
+    }
+
+    function closeEditModal() {
+        document.getElementById('editBookModal').style.display = 'none';
+    }
+
+    document.getElementById('addBookForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const newBook = {
+            id: books.length + 1,
+            author: event.target.author.value,
+            title: event.target.title.value,
+            year: parseInt(event.target.year.value),
+            quantity: parseInt(event.target.quantity.value),
+            image: event.target.image.value
+        };
+        books.push(newBook);
+        renderBooks();
+        closeModal();
+    });
+
+    document.getElementById('editBookForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const id = parseInt(event.target.editBookId.value);
+        const updatedBook = {
+            id: id,
+            author: event.target.editAuthor.value,
+            title: event.target.editTitle.value,
+            year: parseInt(event.target.editYear.value),
+            quantity: parseInt(event.target.editQuantity.value),
+            image: event.target.editImage.value
+        };
+        books = books.map(book => book.id === id ? updatedBook : book);
+        renderBooks();
+        closeEditModal();
+    });
+
+    function sortBooks(criteria) {
+        books.sort((a, b) => {
+            if (criteria === 'year') {
+                return a.year - b.year;
+            } else if (criteria === 'author') {
+                return a.author.localeCompare(b.author);
+            } else if (criteria === 'title') {
+                return a.title.localeCompare(b.title);
+            }
+        });
+        renderBooks();
+    }
+
+    document.getElementById('prev').addEventListener('click', function () {
+        slide('prev');
+    });
+
+    document.getElementById('next').addEventListener('click', function () {
+        slide('next');
+    });
+
+    let currentIndex = 0;
+    const slides = document.querySelector('.slides');
+    const images = slides.querySelectorAll('img');
+
+    function slide(direction) {
+        if (direction === 'next') {
+            currentIndex = (currentIndex + 1) % images.length;
+        } else {
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+        }
+        slides.style.transform = `translateX(-${currentIndex * 100}%)`;
+    }
+
+    // Initial rendering of books
+    renderBooks();
+</script>
+</body>
