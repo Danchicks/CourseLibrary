@@ -1,42 +1,41 @@
 package org.example.data.controller;
 
 import org.example.data.model.BookClass;
+import org.example.data.service.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 public class BookController {
-
-    private Map<String, BookClass> bookRepository = new ConcurrentHashMap<>();
+    @Autowired
+    private BookService bookService;
 
     @GetMapping
-    public Collection<BookClass> getAllBooks() {
-        return bookRepository.values();
+    public List<BookClass> getAllBooks() {
+        return bookService.getAllBooks();
+    }
+
+    @GetMapping("/{id}")
+    public BookClass getBookById(@PathVariable String id) {
+        return bookService.getBookById(id);
     }
 
     @PostMapping
-    public BookClass addBook(@RequestBody BookClass book) {
-        bookRepository.put(book.getId(), book);
-        return book;
+    public BookClass createBook(@RequestBody BookClass book) {
+        return bookService.saveBook(book);
     }
 
     @PutMapping("/{id}")
     public BookClass updateBook(@PathVariable String id, @RequestBody BookClass book) {
-        bookRepository.put(id, book);
-        return book;
-    }
-
-    @GetMapping("/{id}")
-    public BookClass getBook(@PathVariable String id) {
-        return bookRepository.get(id);
+        book.setId(id);
+        return bookService.saveBook(book);
     }
 
     @DeleteMapping("/{id}")
     public void deleteBook(@PathVariable String id) {
-        bookRepository.remove(id);
+        bookService.deleteBook(id);
     }
 }

@@ -1,548 +1,485 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-image: url('https://t3.ftcdn.net/jpg/03/44/52/84/360_F_344528412_kCNXLrHETwxS0ztSTcD6N4Z09FZGpOdQ.jpg');
-            background-size: 360px 360px;
-            background-repeat: repeat;
-        }
-
-        header {
-            background-color: #333;
-            color: white;
-            padding: 20px;
-            text-align: left;
-            font-size: 24px;
-            display: flex;
-            align-items: center;
-        }
-
-        header i {
-            margin-right: 10px;
-        }
-
-        .parallax-container {
-            height: 500px;
-            overflow: hidden;
-            position: relative;
-            background-image: url('https://www.travelandleisure.com/thmb/9F77hDCz6uj3cJIBW4f4kGdfbn8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/admont-abbey-library-admont-austria-LIBRARY0319-2aa89cccb89d4f44b71181e64b54fbfb.jpg');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center;
-            filter: blur(0.2px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .slider {
-            display: flex;
-            width: 60%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .slide {
-            min-width: 100%;
-            transition: transform 0.5s ease-in-out;
-        }
-
-
-        .slide img {
-            width: 300px;
-            height: 100%;
-            display: block;
-            margin: 0 auto;
-        }
-
-        .slider-buttons {
-            position: absolute;
-            top: 50%;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            transform: translateY(-50%);
-        }
-
-        .slider-button {
-            background-color: rgba(0, 0, 0, 0.5);
-            border: none;
-            color: white;
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-        }
-
-        .slider-button:hover {
-            background-color: rgba(0, 0, 0, 0.8);
-        }
-
-        .content {
-            padding: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .buttons {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .buttons button {
-            margin: 0 5px;
-            padding: 10px 20px;
-            cursor: pointer;
-            background-color: #333;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .buttons button:hover {
-            background-color: #555;
-            box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .book-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-            justify-content: center;
-        }
-
-        .book-block {
-            background-color: white;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-align: center;
-            width: 200px;
-            position: relative;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            transition: box-shadow 0.3s;
-        }
-
-        .book-block:hover {
-            box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .book-block img {
-            max-width: 100%;
-            height: auto;
-        }
-
-        .actions {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .actions button {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .actions button:hover {
-            background-color: #555;
-        }
-
-        .actions .delete-btn {
-            background: transparent;
-            border: none;
-            padding: 0;
-        }
-
-        .actions .delete-btn img {
-            width: 30px;
-            height: 30px;
-            transition: filter 0.3s;
-        }
-
-        .actions .delete-btn img:hover {
-            filter: invert(31%) sepia(93%) saturate(4592%) hue-rotate(347deg) brightness(90%) contrast(105%);
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 10% auto;
-            padding: 20px;
-            width: 80%;
-            max-width: 500px;
-            border-radius: 5px;
-            box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            cursor: pointer;
-        }
-
-        .modal-content form {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .modal-content form label {
-            font-weight: bold;
-        }
-
-        .modal-content form input {
-            padding: 5px;
-            font-size: 16px;
-            border-radius: 3px;
-            border: 1px solid #ccc;
-        }
-
-        .modal-content form button {
-            padding: 10px;
-            font-size: 16px;
-            background-color: #333;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 3px;
-            transition: background-color 0.3s, box-shadow 0.3s;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content form button:hover {
-            background-color: #555;
-            box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
-        }
-    </style>
-</head>
-<body>
-<header>
-    <img width="48" height="48" src="https://img.icons8.com/emoji/48/books-emoji.png" alt="books-emoji" style="margin-right: 10px;">
-    <span>Бібліотека</span>
-</header>
-
-<div class="parallax-container">
-    <div id="slider" class="slider">
-        <div class="slide"><img src="default-cover1.jpg" alt="Default Cover 1"></div>
-        <div class="slide"><img src="default-cover2.jpg" alt="Default Cover 2"></div>
-        <div class="slide"><img src="default-cover3.jpg" alt="Default Cover 3"></div>
-    </div>
-    <div class="slider-buttons">
-        <button class="slider-button" id="prevButton">&#10094;</button>
-        <button class="slider-button" id="nextButton">&#10095;</button>
-    </div>
-</div>
-
-<div class="content">
-    <h2>Список книг</h2>
-    <div class="buttons">
-        <button onclick="openAddBookModal()">Додати книгу</button>
-        <button onclick="sortByYear()">Сортувати за роком</button>
-        <button onclick="sortByAuthor()">Сортувати за автором</button>
-        <button onclick="sortByTitle()">Сортувати за назвою</button>
-    </div>
-
-    <div id="book-list" class="book-list"></div>
-</div>
-
-<div id="addBookModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeAddBookModal()">&times;</span>
-        <h2 id="modal-title">Додати нову книгу</h2>
-        <form id="addBookForm">
-            <input type="hidden" id="bookId">
-            <label for="author">Автор:</label>
-            <input type="text" id="author" required>
-            <label for="title">Назва:</label>
-            <input type="text" id="title" required>
-            <label for="year">Рік:</label>
-            <input type="number" id="year" required>
-            <label for="quantity">Кількість:</label>
-            <input type="number" id="quantity" required>
-            <label for="coverUrl">URL обкладинки:</label>
-            <input type="text" id="coverUrl">
-            <button type="button" onclick="saveBook()">Зберегти</button>
-        </form>
-    </div>
-</div>
-
-<script>
-    let currentSlideIndex = 0;
-    let sliderInterval;
-    let editingBookId = null;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        loadBooks();
-        sliderInterval = setInterval(showNextSlide, 4000);
-        document.getElementById('prevButton').addEventListener('click', showPrevSlide);
-        document.getElementById('nextButton').addEventListener('click', showNextSlide);
-    });
-
-    function loadBooks() {
-        fetch('/books')
-            .then(response => response.json())
-            .then(books => {
-                const bookList = document.getElementById('book-list');
-                bookList.innerHTML = '';
-                books.forEach(book => {
-                    const bookBlock = createBookBlock(book);
-                    bookList.appendChild(bookBlock);
-                });
-                updateSlider(books);
-            })
-            .catch(error => console.error('Error loading books:', error));
-    }
-
-    function createBookBlock(book) {
-        const bookBlock = document.createElement('div');
-        bookBlock.classList.add('book-block');
-        bookBlock.id = `book-${book.id}`;
-
-        const cover = document.createElement('img');
-        cover.src = book.coverUrl || 'default-cover.jpg';
-        cover.alt = book.title;
-
-        const title = document.createElement('h3');
-        title.textContent = book.title;
-
-        const author = document.createElement('p');
-        author.textContent = `Автор: ${book.author}`;
-
-        const year = document.createElement('p');
-        year.textContent = `Рік: ${book.year}`;
-
-        const quantity = document.createElement('p');
-        quantity.textContent = `Кількість: ${book.quantity}`;
-
-        const actions = document.createElement('div');
-        actions.classList.add('actions');
-
-        const editButton = document.createElement('button');
-        editButton.textContent = 'Редагувати';
-        editButton.onclick = () => openEditBookModal(book.id);
-
-        const deleteButton = document.createElement('button');
-        deleteButton.classList.add('delete-btn');
-        deleteButton.innerHTML = '<img width="30" height="30" src="https://img.icons8.com/ios/50/waste.png" alt="waste"/>';
-        deleteButton.onclick = () => deleteBook(book.id);
-
-        actions.appendChild(editButton);
-        actions.appendChild(deleteButton);
-
-        bookBlock.appendChild(cover);
-        bookBlock.appendChild(title);
-        bookBlock.appendChild(author);
-        bookBlock.appendChild(year);
-        bookBlock.appendChild(quantity);
-        bookBlock.appendChild(actions);
-
-        return bookBlock;
-    }
-
-    function openAddBookModal() {
-        editingBookId = null;
-        document.getElementById('modal-title').textContent = 'Додати нову книгу';
-        document.getElementById('bookId').value = '';
-        document.getElementById('author').value = '';
-        document.getElementById('title').value = '';
-        document.getElementById('year').value = '';
-        document.getElementById('quantity').value = '';
-        document.getElementById('coverUrl').value = '';
-        document.getElementById('addBookModal').style.display = 'block';
-    }
-
-    function openEditBookModal(id) {
-        editingBookId = id;
-        document.getElementById('modal-title').textContent = 'Редагувати книгу';
-        fetch('/books/' + id)
-            .then(response => response.json())
-            .then(book => {
-                document.getElementById('bookId').value = book.id;
-                document.getElementById('author').value = book.author;
-                document.getElementById('title').value = book.title;
-                document.getElementById('year').value = book.year;
-                document.getElementById('quantity').value = book.quantity;
-                document.getElementById('coverUrl').value = book.coverUrl;
-                document.getElementById('addBookModal').style.display = 'block';
-            })
-            .catch(error => console.error('Error fetching book data:', error));
-    }
-
-    function closeAddBookModal() {
-        document.getElementById('addBookModal').style.display = 'none';
-    }
-
-    function saveBook() {
-        const book = {
-            id: editingBookId || Date.now().toString(),
-            author: document.getElementById('author').value,
-            title: document.getElementById('title').value,
-            year: document.getElementById('year').value,
-            quantity: document.getElementById('quantity').value,
-            coverUrl: document.getElementById('coverUrl').value
-        };
-
-        const method = editingBookId ? 'PUT' : 'POST';
-        const url = editingBookId ? `/books/${editingBookId}` : '/books';
-
-        fetch(url, {
-            method: method,
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(book)
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(() => {
-                closeAddBookModal();
-                loadBooks();
-            })
-            .catch(error => console.error('Error saving book:', error));
-    }
-
-    function deleteBook(id) {
-        fetch(`/books/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
+ <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Library</title>
+        <link rel="icon" href="https://img.icons8.com/emoji/48/books-emoji.png" type="image/x-icon">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+                background-image: url('https://t3.ftcdn.net/jpg/03/44/52/84/360_F_344528412_kCNXLrHETwxS0ztSTcD6N4Z09FZGpOdQ.jpg');
+                background-size: 360px 360px;
+                background-repeat: repeat;
             }
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                document.getElementById('book-' + id).remove();
-            })
-            .catch(error => console.error('Error deleting book:', error));
-    }
 
-    function sortByYear() {
-        fetch('/books')
-            .then(response => response.json())
-            .then(books => {
-                books.sort((a, b) => a.year - b.year);
-                const bookList = document.getElementById('book-list');
-                bookList.innerHTML = '';
-                books.forEach(book => {
-                    const bookBlock = createBookBlock(book);
-                    bookList.appendChild(bookBlock);
-                });
-                updateSlider(books);
-            })
-            .catch(error => console.error('Error sorting books by year:', error));
-    }
+            header {
+                background-color: #333;
+                color: white;
+                padding: 20px;
+                text-align: left;
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+            }
 
-    function sortByAuthor() {
-        fetch('/books')
-            .then(response => response.json())
-            .then(books => {
-                books.sort((a, b) => a.author.localeCompare(b.author));
-                const bookList = document.getElementById('book-list');
-                bookList.innerHTML = '';
-                books.forEach(book => {
-                    const bookBlock = createBookBlock(book);
-                    bookList.appendChild(bookBlock);
-                });
-                updateSlider(books);
-            })
-            .catch(error => console.error('Error sorting books by author:', error));
-    }
+            header i {
+                margin-right: 10px;
+            }
 
-    function sortByTitle() {
-        fetch('/books')
-            .then(response => response.json())
-            .then(books => {
-                books.sort((a, b) => a.title.localeCompare(b.title));
-                const bookList = document.getElementById('book-list');
-                bookList.innerHTML = '';
-                books.forEach(book => {
-                    const bookBlock = createBookBlock(book);
-                    bookList.appendChild(bookBlock);
-                });
-                updateSlider(books);
-            })
-            .catch(error => console.error('Error sorting books by title:', error));
-    }
+            .parallax-container {
+                height: 500px;
+                overflow: hidden;
+                position: relative;
+                background-image: url('https://www.travelandleisure.com/thmb/9F77hDCz6uj3cJIBW4f4kGdfbn8=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/admont-abbey-library-admont-austria-LIBRARY0319-2aa89cccb89d4f44b71181e64b54fbfb.jpg');
+                background-attachment: fixed;
+                background-size: cover;
+                background-position: center;
+                filter: blur(0.2px);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
 
-    function updateSlider(books) {
-        const slider = document.getElementById('slider');
-        slider.innerHTML = '';
+            .slider {
+                display: flex;
+                width: 60%;
+                overflow: hidden;
+                position: relative;
+            }
 
-        const bookCovers = books.map(book => book.coverUrl);
-        if (bookCovers.length === 0) {
-            bookCovers.push('https://libruk.com.ua/wp-content/uploads/chumak.jpg', 'https://libruk.com.ua/wp-content/uploads/12055861.jpg', 'https://libruk.com.ua/wp-content/uploads/22778693.jpg');
-        }
+            .slide {
+                min-width: 100%;
+                transition: transform 0.5s ease-in-out;
+            }
 
-        bookCovers.forEach(coverUrl => {
-            const slide = document.createElement('div');
-            slide.classList.add('slide');
-            const img = document.createElement('img');
-            img.src = coverUrl;
-            slide.appendChild(img);
-            slider.appendChild(slide);
+
+            .slide img {
+                width: 300px;
+                height: 100%;
+                display: block;
+                margin: 0 auto;
+            }
+
+            .slider-buttons {
+                position: absolute;
+                top: 50%;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                transform: translateY(-50%);
+            }
+
+            .slider-button {
+                background-color: rgba(0, 0, 0, 0.5);
+                border: none;
+                color: white;
+                padding: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+            }
+
+            .slider-button:hover {
+                background-color: rgba(0, 0, 0, 0.8);
+            }
+
+            .content {
+                padding: 20px;
+                max-width: 1200px;
+                margin: 0 auto;
+            }
+
+            .buttons {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .buttons button {
+                margin: 0 5px;
+                padding: 10px 20px;
+                cursor: pointer;
+                background-color: #333;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                transition: background-color 0.3s, box-shadow 0.3s;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
+
+            .buttons button:hover {
+                background-color: #555;
+                box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+            }
+
+            .book-list {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 20px;
+                justify-content: center;
+            }
+
+            .book-block {
+                background-color: white;
+                padding: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                text-align: center;
+                width: 200px;
+                position: relative;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+                transition: box-shadow 0.3s;
+            }
+
+            .book-block:hover {
+                box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+            }
+
+            .book-block img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            .actions {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+                margin-top: 10px;
+            }
+
+            .actions button {
+                background-color: #333;
+                color: white;
+                border: none;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .actions button:hover {
+                background-color: #555;
+            }
+
+            .actions .delete-btn {
+                background: transparent;
+                border: none;
+                padding: 0;
+            }
+
+            .actions .delete-btn img {
+                width: 30px;
+                height: 30px;
+                transition: filter 0.3s;
+            }
+
+            .actions .delete-btn img:hover {
+                filter: invert(31%) sepia(93%) saturate(4592%) hue-rotate(347deg) brightness(90%) contrast(105%);
+            }
+
+            .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                overflow: auto;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .modal-content {
+                background-color: white;
+                margin: 10% auto;
+                padding: 20px;
+                width: 80%;
+                max-width: 500px;
+                border-radius: 5px;
+                box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+            }
+
+            .close {
+                color: #aaa;
+                float: right;
+                font-size: 28px;
+                cursor: pointer;
+            }
+
+            .modal-content form {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .modal-content form label {
+                font-weight: bold;
+            }
+
+            .modal-content form input {
+                padding: 5px;
+                font-size: 16px;
+                border-radius: 3px;
+                border: 1px solid #ccc;
+            }
+
+            .modal-content form button {
+                padding: 10px;
+                font-size: 16px;
+                background-color: #333;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 3px;
+                transition: background-color 0.3s, box-shadow 0.3s;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            }
+          .modal-content form button:hover {
+                background-color: #555;
+                box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.2);
+            }
+       </style>
+    </head>
+    <body>
+    <header>
+        <img width="48" height="48" src="https://img.icons8.com/emoji/48/books-emoji.png" alt="books-emoji">
+        <span>Бібліотека</span>
+    </header>
+
+    <div class="parallax-container">
+        <div id="slider" class="slider">
+            <div class="slide"><img src="default-cover1.jpg" alt="Default Cover 1"></div>
+            <div class="slide"><img src="default-cover2.jpg" alt="Default Cover 2"></div>
+            <div class="slide"><img src="default-cover3.jpg" alt="Default Cover 3"></div>
+        </div>
+        <div class="slider-buttons">
+            <button class="slider-button" id="prevButton">&#10094;</button>
+            <button class="slider-button" id="nextButton">&#10095;</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Список книг</h2>
+        <div class="buttons">
+            <button onclick="openAddBookModal()">Додати книгу</button>
+            <button onclick="sortBooks('year')">Сортувати за роком</button>
+            <button onclick="sortBooks('author')">Сортувати за автором</button>
+            <button onclick="sortBooks('title')">Сортувати за назвою</button>
+        </div>
+
+        <div id="book-list" class="book-list"></div>
+    </div>
+
+    <div id="addBookModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAddBookModal()">&times;</span>
+            <h2 id="modal-title">Додати нову книгу</h2>
+            <form id="addBookForm">
+                <input type="hidden" id="bookId">
+                <label for="author">Автор:</label>
+                <input type="text" id="author" required>
+                <label for="title">Назва:</label>
+                <input type="text" id="title" required>
+                <label for="year">Рік:</label>
+                <input type="number" id="year" required>
+                <label for="quantity">Кількість:</label>
+                <input type="number" id="quantity" required>
+                <label for="coverUrl">URL обкладинки:</label>
+                <input type="text" id="coverUrl">
+                <button type="button" onclick="saveBook()">Зберегти</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentSlideIndex = 0;
+        let sliderInterval;
+        let editingBookId = null;
+        let books = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadBooks();
+            sliderInterval = setInterval(showNextSlide, 2000);
+            document.getElementById('prevButton').addEventListener('click', showPrevSlide);
+            document.getElementById('nextButton').addEventListener('click', showNextSlide);
         });
 
-        clearInterval(sliderInterval);
-        sliderInterval = setInterval(showNextSlide, 2000);
-    }
-
-    function showPrevSlide() {
-        const slides = document.querySelectorAll('.slide');
-        if (currentSlideIndex === 0) {
-            currentSlideIndex = slides.length - 1;
-        } else {
-            currentSlideIndex--;
+        function loadBooks() {
+            fetch('/books')
+                .then(response => response.json())
+                .then(data => {
+                    books = data;
+                    displayBooks(books);
+                    updateSlider(books);
+                })
+                .catch(error => console.error('Error loading books:', error));
         }
-        updateSlidePosition();
-    }
 
-    function showNextSlide() {
-        const slides = document.querySelectorAll('.slide');
-        if (currentSlideIndex === slides.length - 1) {
+        function displayBooks(books) {
+            const bookList = document.getElementById('book-list');
+            bookList.innerHTML = '';
+            books.forEach(book => {
+                const bookBlock = createBookBlock(book);
+                bookList.appendChild(bookBlock);
+            });
+        }
+
+        function createBookBlock(book) {
+            const bookBlock = document.createElement('div');
+            bookBlock.classList.add('book-block');
+            bookBlock.id = `book-${book.id}`;
+
+            const cover = document.createElement('img');
+            cover.src = book.coverUrl || 'default-cover.jpg';
+            cover.alt = book.title;
+
+            const title = document.createElement('h3');
+            title.textContent = book.title;
+
+            const author = document.createElement('p');
+            author.textContent = `Автор: ${book.author}`;
+
+            const year = document.createElement('p');
+            year.textContent = `Рік: ${book.year}`;
+
+            const quantity = document.createElement('p');
+            quantity.textContent = `Кількість: ${book.quantity}`;
+
+            const actions = document.createElement('div');
+            actions.classList.add('actions');
+
+            const editButton = document.createElement('button');
+            editButton.textContent = 'Редагувати';
+            editButton.onclick = () => openEditBookModal(book);
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = 'Видалити';
+            deleteButton.onclick = () => deleteBook(book.id);
+
+            actions.appendChild(editButton);
+            actions.appendChild(deleteButton);
+
+            bookBlock.appendChild(cover);
+            bookBlock.appendChild(title);
+            bookBlock.appendChild(author);
+            bookBlock.appendChild(year);
+            bookBlock.appendChild(quantity);
+            bookBlock.appendChild(actions);
+
+            return bookBlock;
+        }
+
+        function openAddBookModal() {
+            editingBookId = null;
+            document.getElementById('modal-title').textContent = 'Додати нову книгу';
+            document.getElementById('bookId').value = '';
+            document.getElementById('author').value = '';
+            document.getElementById('title').value = '';
+            document.getElementById('year').value = '';
+            document.getElementById('quantity').value = '';
+            document.getElementById('coverUrl').value = '';
+            document.getElementById('addBookModal').style.display = 'block';
+        }
+
+        function openEditBookModal(book) {
+            editingBookId = book.id;
+            document.getElementById('modal-title').textContent = 'Редагувати книгу';
+            document.getElementById('bookId').value = book.id;
+            document.getElementById('author').value = book.author;
+            document.getElementById('title').value = book.title;
+            document.getElementById('year').value = book.year;
+            document.getElementById('quantity').value = book.quantity;
+            document.getElementById('coverUrl').value = book.coverUrl;
+            document.getElementById('addBookModal').style.display = 'block';
+        }
+
+        function closeAddBookModal() {
+            document.getElementById('addBookModal').style.display = 'none';
+        }
+
+        function saveBook() {
+            const bookId = document.getElementById('bookId').value;
+            const author = document.getElementById('author').value;
+            const title = document.getElementById('title').value;
+            const year = document.getElementById('year').value;
+            const quantity = document.getElementById('quantity').value;
+            const coverUrl = document.getElementById('coverUrl').value;
+
+            const book = { author, title, year, quantity, coverUrl };
+
+            if (editingBookId) {
+                fetch(`/books/${editingBookId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(book)
+                }).then(response => response.json())
+                    .then(() => {
+                        closeAddBookModal();
+                        loadBooks();
+                    })
+                    .catch(error => console.error('Error updating book:', error));
+            } else {
+                fetch('/books', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(book)
+                }).then(response => response.json())
+                    .then(() => {
+                        closeAddBookModal();
+                        loadBooks();
+                    })
+                    .catch(error => console.error('Error adding book:', error));
+            }
+        }
+
+        function deleteBook(id) {
+            fetch(`/books/${id}`, { method: 'DELETE' })
+                .then(() => {
+                    document.getElementById(`book-${id}`).remove();
+                })
+                .catch(error => console.error('Error deleting book:', error));
+        }
+
+        function updateSlider(books) {
+            const slider = document.getElementById('slider');
+            slider.innerHTML = '';
+
+            books.forEach(book => {
+                const slide = document.createElement('div');
+                slide.classList.add('slide');
+
+                const img = document.createElement('img');
+                img.src = book.coverUrl || 'default-cover.jpg';
+                img.alt = book.title;
+
+                slide.appendChild(img);
+                slider.appendChild(slide);
+            });
+
             currentSlideIndex = 0;
-        } else {
-            currentSlideIndex++;
         }
-        updateSlidePosition();
-    }
 
-    function updateSlidePosition() {
-        const slides = document.querySelectorAll('.slide');
-        slides.forEach((slide, index) => {
-            slide.style.transform = `translateX(${100 * (index - currentSlideIndex)}%)`;
-        });
-    }
-</script>
-</body>
-</html>
+        function showNextSlide() {
+            const slides = document.querySelectorAll('.slide');
+            currentSlideIndex = (currentSlideIndex + 1) % slides.length;
+            document.getElementById('slider').style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        }
+
+        function showPrevSlide() {
+            const slides = document.querySelectorAll('.slide');
+            currentSlideIndex = (currentSlideIndex - 1 + slides.length) % slides.length;
+            document.getElementById('slider').style.transform = `translateX(-${currentSlideIndex * 100}%)`;
+        }
+
+        function sortBooks(criteria) {
+            books.sort((a, b) => {
+                if (a[criteria] < b[criteria]) return -1;
+                if (a[criteria] > b[criteria]) return 1;
+                return 0;
+            });
+            displayBooks(books);
+        }
+    </script>
+    </body>
+ </html>

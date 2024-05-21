@@ -1,5 +1,10 @@
 package org.example.data.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "books")
+
 public class BookClass {
     private String id;
     private String author;
