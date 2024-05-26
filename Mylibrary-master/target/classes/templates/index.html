@@ -16,7 +16,7 @@
             }
 
             header {
-                background-color: #333;
+                background-color: #423b3b;
                 color: white;
                 padding: 20px;
                 text-align: left;
@@ -206,6 +206,13 @@
                 font-size: 28px;
                 cursor: pointer;
             }
+            .menu-div{
+                background-color: #333;
+                height: 40px;
+                width: 200px;
+                text-align: center;
+                border-radius: 5px;
+            }
 
             .modal-content form {
                 display: flex;
@@ -258,7 +265,10 @@
     </div>
 
     <div class="content">
-        <h2>Список книг</h2>
+        <div class="menu-div">
+            <h2 style="color: aliceblue;">Список книг</h2>
+        </div>
+
         <div class="buttons">
             <button onclick="openAddBookModal()">Додати книгу</button>
             <button onclick="sortBooks('year')">Сортувати за роком</button>
@@ -291,7 +301,7 @@
     </div>
 
     <script>
-        let currentSlideIndex = 0;
+
         let sliderInterval;
         let editingBookId = null;
         let books = [];
@@ -302,21 +312,10 @@
             document.getElementById('prevButton').addEventListener('click', showPrevSlide);
             document.getElementById('nextButton').addEventListener('click', showNextSlide);
         });
-
         let currentSlide = 0;
 
-        function fetchBooks() {
-            fetch('get_books.php')
-                .then(response => response.json())
-                .then(data => {
-                    displayBooks(data);
-                    updateSlider(data);
-                })
-                .catch(error => console.error('Error fetching books:', error));
-        }
-
         function loadBooks() {
-            fetch('/books')
+            fetch('http://localhost:8080/books')
                 .then(response => response.json())
                 .then(data => {
                     books = data;
@@ -419,7 +418,7 @@
             const book = { author, title, year, quantity, coverUrl };
 
             if (editingBookId) {
-                fetch(`/books/${editingBookId}`, {
+                fetch(`http://localhost:8080/books/${editingBookId}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(book)
@@ -430,7 +429,7 @@
                     })
                     .catch(error => console.error('Error updating book:', error));
             } else {
-                fetch('/books', {
+                fetch('http://localhost:8080/books/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(book)
@@ -444,7 +443,7 @@
         }
 
         function deleteBook(id) {
-            fetch(`/books/${id}`, { method: 'DELETE' })
+            fetch(`http://localhost:8081/books/${id}`, { method: 'DELETE' })
                 .then(() => {
                     document.getElementById(`book-${id}`).remove();
                 })
@@ -483,7 +482,7 @@
         }
 
         document.getElementById('nextButton').addEventListener('click', nextSlide);
-        document.getElementById('prevButton').addEventListener('click', prevSlide);ч
+        document.getElementById('prevButton').addEventListener('click', prevSlide);
 
         function sortBooks(criteria) {
             books.sort((a, b) => {
@@ -493,6 +492,23 @@
             });
             displayBooks(books);
         }
+        function startAutoSlide() {
+             autoSlideInterval = setInterval(nextSlide, 3000);
+        }
+
+        function stopAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        document.getElementById('prevButton').addEventListener('click', prevSlide);
+        document.getElementById('nextButton').addEventListener('click', nextSlide);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            displayBooks();
+            updateSlider();
+            startAutoSlide();
+        });
     </script>
     </body>
  </html>

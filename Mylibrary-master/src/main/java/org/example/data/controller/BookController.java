@@ -5,6 +5,7 @@ import org.example.data.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.List;
 
 @RestController
@@ -39,3 +40,4 @@ public class BookController {
         bookService.deleteBook(id);
     }
 }
+
